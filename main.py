@@ -8,7 +8,8 @@ from io import StringIO
 import awswrangler as wr
 import pyarrow as pa
 import pyarrow.parquet as pq
-
+import sys
+from dotenv import load_dotenv, find_dotenv
 
 # Dictionary mapping city names to station names in station Inventory
 city_map={
@@ -71,12 +72,7 @@ def get_station_id(city_name):
 
 #Function to upload data in S3 with parquet partition.
 def upload_to_s3(data, s3_bucket, s3_prefix):
-    session = boto3.Session(
-        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
-        region_name=os.environ.get("AWS_REGION")
-    )
-    s3_client = session.client("s3")
+    
     s3 = pa.fs.S3FileSystem(region=os.environ.get("AWS_REGION"))
 
     for year_month_day, partitioned_data in data.groupby('Year_Month_Day'):
@@ -139,7 +135,9 @@ def main():
     parser.add_argument("--city", type=str, help="Name of the city")
     parser.add_argument("--year", type=int, help="Start year")
     args = parser.parse_args()
-
+    fileenv= load_dotenv(find_dotenv(filename='.environment'))
+    
+    
     if args.city is None:
         print("Please provide a city using the --city argument.")
         return
@@ -164,7 +162,7 @@ def main():
             weather_data = pd.concat([weather_data, data], ignore_index=True)
 
     # Create an Excel file with separate sheets for each year's data
-    output_file = "weather_data_"+args.city+".xlsx"
+    output_file = "/wave/weather_data_"+args.city+".xlsx"
     create_excel_sheets(weather_data, output_file)
 
     # Remove rows with null values in specific columns and remove unwanted columns
@@ -184,7 +182,8 @@ def main():
     weather_data['Year_Month_Day'] = weather_data['Date/Time'].str.slice(0, 10)
 
     # Upload data to S3 and partition it
-    s3_bucket = "nikhil-glue-practice"
+    s3_bucket = os.environ.get('S3_BUCKET_NAME')
+    print(s3_bucket)
     s3_prefix = "weather_data/" + args.city
     upload_to_s3(weather_data,s3_bucket,s3_prefix)
 

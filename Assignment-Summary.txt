@@ -1,0 +1,56 @@
+I have completed both the given task and this is summary of the assignment
+
+-->before testing code add proper values in .enviornment file. It contains AWS access,secret,region and bucket values
+-->requirement.txt contains all the necessary lib needed to be download while running code in docker container
+-->install_requirements.sh needed to run while running on local pc for the same operation.
+--> Dockerfile contains code to create image.
+--> main.py contains main code for task.
+
+
+Task1:
+Python 3.8+ needd to be download in local machine.
+Download all dependencies with install_requirements.sh
+Before running install_requirements.sh permission command needed. run following code in bash script
+-->chmod +x install_requirements.sh
+Then run install_requirements.sh with following code
+--> ./install_requirements.sh
+Now that we have all the requirements we can run main.py
+--> python main.py --city=Toronto --year==2018
+code dynamically works for following cities in canada. and needed to be add exact same input to get result.
+    "Victoria",
+    "Vancouver",
+    "Edmonton",
+    "Calgary",
+    "Regina",
+    "Saskatoon",
+    "Winnipeg",
+    "Ottawa",
+    "Toronto",
+    "Quebec",
+    "Quebec/Jean Lesage",
+    "Montreal/Pierre Elliott Trudeau",
+    "Montreal",
+    "Montreal Mirabel",
+    "Fredericton",
+    "Moncton/Greater Moncton Romeo Leblanc",
+    "Moncton / Greater Moncton Romeo Leblanc",
+    "Gander",
+    "St. John's"
+Although i found some things while working on assignment that weather data needed station ID to fetch data. so i am collecting from 
+Station Inventory. Apart from that i did not find any relevacy of inventory so i did not joined 2 tables.
+Other things i have completed as per asked. code will generate excel file with each years data in different tab and will save
+in wave/ folder.
+After cleaning of data i am uploading data in S3 with partition to the day level in parquet format.
+Reading same data for further analytical questions. and solving those queries in pandas.
+
+Task2:
+Docker takes care of requirements and just needed to run 2 commands which will build and run container.
+same code i am running in container and also storing excel file in wave/ volume.
+
+run following commands on bash to run docker container
+--> docker build -t wave_assignment  --build-arg cityname=Toronto --build-arg yearvalue=2018 .
+here you can change inputs for city and year.
+--> docker run -it -v wave:/wave wave_assignment
+
+
+Thank You for this opportunity. It was fun to solve this assignment. looking forward to hear back from you.
